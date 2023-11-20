@@ -3,6 +3,7 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject
 
 class ViewModel(QObject):
     valueChanged = pyqtSignal(int)
+    key_changed = pyqtSignal(str)
     def __init__(self):
         super().__init__()
         self.model = Model()
@@ -16,4 +17,4 @@ class ViewModel(QObject):
         self.valueChanged.emit(self.model.value)
 
     def key_pressed(self, key):
-        self.model.set_key(key)
+        self.key_changed.emit(key)

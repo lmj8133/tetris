@@ -1,7 +1,6 @@
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject
 
 class Model(QObject):
-    key_changed = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
@@ -12,6 +11,3 @@ class Model(QObject):
 
     def decrement(self):
         self.value -= 1
-
-    def set_key(self, key):
-        self.key_changed.emit(key)
