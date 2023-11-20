@@ -26,7 +26,7 @@ class View(QWidget):
 
         self.setLayout(layout)
 
-        self.view_model.model.valueChanged.connect(self.update_label)
+        self.view_model.valueChanged.connect(self.update_label)
         self.view_model.model.key_changed.connect(self.update_key)
 
     def keyPressEvent(self, event):
