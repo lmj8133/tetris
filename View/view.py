@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QPixmap
 
 class View(QWidget):
     def __init__(self, view_model):
@@ -16,18 +17,17 @@ class View(QWidget):
         self.label = QLabel()
         layout.addWidget(self.label)
 
-        inc_button = QPushButton("Increment")
-        inc_button.clicked.connect(self.view_model.increment)
-        layout.addWidget(inc_button)
-
-        dec_button = QPushButton("Decrement")
-        dec_button.clicked.connect(self.view_model.decrement)
-        layout.addWidget(dec_button)
+        start_button = QPushButton("Start")
+        start_button.clicked.connect(self.view_model.shuffle_question)
+        layout.addWidget(start_button)
 
         self.setLayout(layout)
 
+        self.label.setPixmap(QPixmap(self.view_model.model.question.path))
+
         self.view_model.valueChanged.connect(self.update_label)
-        self.view_model.key_changed.connect(self.update_key)
+        self.view_model.keyChanged.connect(self.update_key)
+        self.view_model.questionChanged.connect(self.update_question)
 
     def keyPressEvent(self, event):
         key = event.text()
@@ -38,5 +38,9 @@ class View(QWidget):
         self.label.setText(f"Counter: {value}")
 
     @pyqtSlot(str)
-    def update_key(self, key):
-        self.label.setText(f"Key: {key}")
+    def update_question(self, path):
+        self.label.setText(f"Question {path}.")
+        self.label.setPixmap(QPixmap(path))
+
+    def update_key(self, result):
+        self.label.setText(f"{result}")
