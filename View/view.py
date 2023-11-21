@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtGui import QPixmap
 from threading import Timer
 
@@ -21,6 +21,7 @@ class View(QWidget):
         self.setLayout(layout)
 
         self.label.setPixmap(QPixmap(self.view_model.model.question.path))
+        self.label.setAlignment(Qt.AlignCenter)
 
         self.view_model.valueChanged.connect(self.update_label)
         self.view_model.keyChanged.connect(self.update_key)
