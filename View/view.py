@@ -10,7 +10,7 @@ class View(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("Application")
+        self.setWindowTitle("SRS Practice")
         self.setGeometry(100, 100, 300, 200)
 
         layout = QVBoxLayout()
