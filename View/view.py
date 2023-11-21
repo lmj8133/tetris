@@ -18,10 +18,6 @@ class View(QWidget):
         self.label = QLabel()
         layout.addWidget(self.label)
 
-        start_button = QPushButton("Start")
-        start_button.clicked.connect(self.view_model.shuffle_question)
-        layout.addWidget(start_button)
-
         self.setLayout(layout)
 
         self.label.setPixmap(QPixmap(self.view_model.model.question.path))
