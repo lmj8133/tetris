@@ -1,12 +1,8 @@
-from PyQt5.QtCore import QObject
 from random import choice
 
-
-class Model(QObject):
+class Model:
     def __init__(self):
         super().__init__()
-        self.value = 0
-        self.result = 'Right'
         self.question_JD = Question("./pictures/J-D.png", "d")
         self.question_JA = Question("./pictures/J-A.png", "a")
         self.question_LD = Question("./pictures/L-D.png", "d")
@@ -15,7 +11,7 @@ class Model(QObject):
         self.question_TA = Question("./pictures/T-A.png", "a")
         self.shuffle_question()
 
-    def key_m(self, key):
+    def check_answer(self, key):
         if key == self.question.answer:
             self.result = 'Right'
         else:

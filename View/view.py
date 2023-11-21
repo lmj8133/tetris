@@ -8,6 +8,7 @@ class View(QWidget):
         super().__init__()
         self.view_model = view_model
         self.init_ui()
+        self.start = False
 
     def init_ui(self):
         self.setWindowTitle("SRS Practice")
@@ -20,27 +21,26 @@ class View(QWidget):
 
         self.setLayout(layout)
 
-        self.label.setPixmap(QPixmap(self.view_model.model.question.path))
+        self.label.setText("Press any key to start")
         self.label.setAlignment(Qt.AlignCenter)
 
-        self.view_model.valueChanged.connect(self.update_label)
-        self.view_model.keyChanged.connect(self.update_key)
+        self.view_model.keyChanged.connect(self.show_result)
         self.view_model.questionChanged.connect(self.update_question)
 
     def keyPressEvent(self, event):
         key = event.text()
         self.view_model.key_pressed(key)
 
-    @pyqtSlot(int)
-    def update_label(self, value):
-        self.label.setText(f"Counter: {value}")
-
     @pyqtSlot(str)
     def update_question(self, path):
         self.label.setText(f"Question {path}.")
         self.label.setPixmap(QPixmap(path))
 
-    def update_key(self, result):
-        self.label.setText(f"{result}")
+    def show_result(self, result):
+        if self.start == False:
+            self.start = True
+        else:
+            self.label.setText(f"{result}")
+
         t = Timer(0.5, self.view_model.shuffle_question)
         t.start()
