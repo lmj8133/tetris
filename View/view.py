@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPixmap
+from threading import Timer
 
 class View(QWidget):
     def __init__(self, view_model):
@@ -44,3 +45,5 @@ class View(QWidget):
 
     def update_key(self, result):
         self.label.setText(f"{result}")
+        t = Timer(0.5, self.view_model.shuffle_question)
+        t.start()
