@@ -8,7 +8,6 @@ class View(QWidget):
         super().__init__()
         self.view_model = view_model
         self.init_ui()
-        self.start = False
 
     def init_ui(self):
         self.setWindowTitle("SRS Practice")
@@ -19,21 +18,33 @@ class View(QWidget):
         self.label = QLabel()
         layout.addWidget(self.label)
 
+        start_button = QPushButton("Start")
+        start_button.clicked.connect(self.game_start)
+        layout.addWidget(start_button)
+
         config_button = QPushButton("Configuration")
         config_button.clicked.connect(self.show_configuration)
         layout.addWidget(config_button)
 
         self.setLayout(layout)
 
-        self.label.setText("Press any key to start")
+        #set game screen at middle
         self.label.setAlignment(Qt.AlignCenter)
 
-        self.view_model.keyChanged.connect(self.show_result)
         self.view_model.questionChanged.connect(self.update_question)
 
     def keyPressEvent(self, event):
         key = event.text()
         self.view_model.key_pressed(key)
+
+    def game_start(self):
+        self.view_model.keyChanged.connect(self.show_result)
+        self.view_model.shuffle_question()
+
+    def show_configuration(self):
+        config_dialog = ConfigurationDialog(self.view_model, self)
+        config_dialog.exec_()
+
 
     @pyqtSlot(str)
     def update_question(self, path):
@@ -41,17 +52,10 @@ class View(QWidget):
         self.label.setPixmap(QPixmap(path))
 
     def show_result(self, result):
-        if self.start == False:
-            self.start = True
-        else:
-            self.label.setText(f"{result}")
+        self.label.setText(f"{result}")
 
         t = Timer(0.5, self.view_model.shuffle_question)
         t.start()
-
-    def show_configuration(self):
-        config_dialog = ConfigurationDialog(self.view_model, self)
-        config_dialog.exec_()
 
 class ConfigurationDialog(QDialog):
     def __init__(self, view_model, parent=None):

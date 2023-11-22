@@ -8,6 +8,7 @@ class ViewModel(QObject):
     def __init__(self):
         super().__init__()
         self.model = Model()
+        self.shuffle_question()
 
     def key_pressed(self, key):
         self.model.check_answer(key)
