@@ -7,7 +7,6 @@ from threading import Timer
 class View(QWidget):
     def __init__(self, view_model):
         super().__init__()
-        self.counter = 0
         self.view_model = view_model
         self.init_ui()
 
@@ -36,12 +35,10 @@ class View(QWidget):
         self.view_model.questionChanged.connect(self.update_question)
 
     def keyPressEvent(self, event):
-        print('key press')
         key = event.text()
         self.view_model.key_pressed(key)
 
     def game_start(self):
-        print('start')
         self.start_button.setEnabled(False)
         self.view_model.keyChanged.connect(self.show_result)
         self.view_model.shuffle_question()
@@ -50,15 +47,12 @@ class View(QWidget):
         config_dialog = ConfigurationDialog(self.view_model, self)
         config_dialog.exec_()
 
-
     @pyqtSlot(str)
     def update_question(self, path):
         self.label.setText(f"Question {path}.")
         self.label.setPixmap(QPixmap(path))
 
     def show_result(self, result):
-        self.counter += 1
-        print(f'result{self.counter}')
         self.label.setText(f"{result}")
 
         t = Timer(0.5, self.view_model.shuffle_question)
@@ -98,11 +92,9 @@ class ConfigurationDialog(QDialog):
     def save_configuration(self):
         # Save configuration logic here
         self.saveToJson()
-        self.view_model.getConfig()
         self.accept()
-        #self.view.game_start()
-        #self.view_model.shuffle_question()
-        self.view_model.loadConfig()
+        self.view_model.getConfig()
+        self.view_model.shuffle_question()
 
     def saveToJson(self):
         if self.lineEdit_ccw.text() and self.lineEdit_cw.text():

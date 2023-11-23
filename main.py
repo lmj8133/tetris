@@ -1,6 +1,5 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-#from ..view_model import view_model
 from ViewModel.viewModel import ViewModel
 from View.view import View
 

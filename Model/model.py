@@ -16,13 +16,9 @@ class Model:
         self.shuffle_question()
 
     def check_answer(self, key):
-        print(f'check: {self.question.answer}')
-        print(f'key: {key}')
         if key == self.question.answer:
-            print('Right')
             self.result = 'Right'
         else:
-            print('Wrong')
             self.result = 'Wrong'
 
     def shuffle_question(self):
@@ -40,8 +36,6 @@ class Model:
             self.question_LA = Question("./pictures/L-A.png", self.answer_ccw)
             self.question_TD = Question("./pictures/T-D.png", self.answer_cw)
             self.question_TA = Question("./pictures/T-A.png", self.answer_ccw)
-        print(f'getConfig_cw: {self.answer_cw}')
-        print(f'getConfig_ccw: {self.answer_ccw}')
 
 class Question(Model):
     def __init__(self, path, answer):
