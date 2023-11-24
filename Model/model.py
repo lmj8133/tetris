@@ -4,15 +4,7 @@ from random import choice
 class Model:
     def __init__(self):
         super().__init__()
-        self.answer_cw = "d"
-        self.answer_ccw = "a"
         self.getConfig()
-        self.question_JD = Question("./pictures/J-D.png", self.answer_cw)
-        self.question_JA = Question("./pictures/J-A.png", self.answer_ccw)
-        self.question_LD = Question("./pictures/L-D.png", self.answer_cw)
-        self.question_LA = Question("./pictures/L-A.png", self.answer_ccw)
-        self.question_TD = Question("./pictures/T-D.png", self.answer_cw)
-        self.question_TA = Question("./pictures/T-A.png", self.answer_ccw)
         self.shuffle_question()
 
     def check_answer(self, key):
