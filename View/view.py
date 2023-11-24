@@ -94,7 +94,8 @@ class ConfigurationDialog(QDialog):
         self.saveToJson()
         self.accept()
         self.view_model.getConfig()
-        self.view_model.shuffle_question()
+        if not self.view.start_button.isEnabled():
+            self.view_model.shuffle_question()
 
     def saveToJson(self):
         if self.lineEdit_ccw.text() and self.lineEdit_cw.text():
