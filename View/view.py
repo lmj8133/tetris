@@ -106,7 +106,7 @@ class ConfigurationDialog(QDialog):
             except Exception as e:
                 QMessageBox.critical(self, 'Error', f'Error saving configuration: {str(e)}')
         else:
-            QMessageBox.warnint(self, 'Empty Input', 'Please enter some text in both fields before saving.')
+            QMessageBox.warning(self, 'Empty Input', 'Please enter some text in both fields before saving.')
             
     def loadDefaultConfig(self):
         with open('Config/config.json', 'r') as json_file:
