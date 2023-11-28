@@ -1,13 +1,17 @@
 import json
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QDialog, QLineEdit, QFormLayout, QMessageBox
-from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QPixmap
 from threading import Timer
 
 class View(QWidget):
-    def __init__(self, view_model):
+    keyPressEventSignal = pyqtSignal(str)
+    shuffleQuestionSignal = pyqtSignal()
+    gameStartSignal = pyqtSignal()
+    getConfigSignal = pyqtSignal()
+
+    def __init__(self):
         super().__init__()
-        self.view_model = view_model
         self.init_ui()
 
     def init_ui(self):
@@ -32,19 +36,16 @@ class View(QWidget):
         #set game screen at middle
         self.label.setAlignment(Qt.AlignCenter)
 
-        self.view_model.questionChanged.connect(self.update_question)
-
     def keyPressEvent(self, event):
         key = event.text()
-        self.view_model.key_pressed(key)
+        self.keyPressEventSignal.emit(key)
 
     def game_start(self):
         self.start_button.setEnabled(False)
-        self.view_model.keyChanged.connect(self.show_result)
-        self.view_model.shuffle_question()
+        self.gameStartSignal.emit()
 
     def show_configuration(self):
-        config_dialog = ConfigurationDialog(self.view_model, self)
+        config_dialog = ConfigurationDialog( self)
         config_dialog.exec_()
 
     @pyqtSlot(str)
@@ -55,13 +56,12 @@ class View(QWidget):
     def show_result(self, result):
         self.label.setText(f"{result}")
 
-        t = Timer(0.5, self.view_model.shuffle_question)
+        t = Timer(0.5, self.shuffleQuestionSignal.emit)
         t.start()
 
 class ConfigurationDialog(QDialog):
-    def __init__(self, view_model, view):
+    def __init__(self, view):
         super(ConfigurationDialog, self).__init__()
-        self.view_model = view_model
         self.view = view
         self.init_ui()
         self.loadDefaultConfig()
@@ -93,9 +93,9 @@ class ConfigurationDialog(QDialog):
         # Save configuration logic here
         self.saveToJson()
         self.accept()
-        self.view_model.getConfig()
+        self.view.getConfigSignal.emit()
         if not self.view.start_button.isEnabled():
-            self.view_model.shuffle_question()
+            self.view.shuffleQuestionSignal.emit()
 
     def saveToJson(self):
         if self.lineEdit_ccw.text() and self.lineEdit_cw.text():
