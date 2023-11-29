@@ -10,11 +10,13 @@ class Model(QObject):
         self.getConfig()
         self.shuffle_question()
 
-    def check_answer(self, key):
+    # Check & return answer
+    def return_answer(self, key):
         if key == self.question.answer:
             self.result = 'Right'
         else:
             self.result = 'Wrong'
+        return self.result
 
     def shuffle_question(self):
         sequence = [self.question_J_CW, self.question_J_CCW, self.question_L_CW, self.question_L_CCW, self.question_T_CW, self.question_T_CCW]

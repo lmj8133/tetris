@@ -20,8 +20,7 @@ class ViewModel(QObject):
         self.view.update_question(path)
 
     def key_pressed(self, key):
-        self.model.check_answer(key)
-        self.keyChanged.emit(self.model.result)
+        self.keyChanged.emit(self.model.return_answer(key))
 
     def shuffle_question(self):
         self.model.shuffle_question()
