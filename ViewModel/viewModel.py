@@ -3,21 +3,21 @@ from PyQt5.QtCore import pyqtSignal, QObject
 
 class ViewModel(QObject):
     keyChanged = pyqtSignal(str)
-    questionChanged = pyqtSignal(str)  # Add this line
 
     def __init__(self, view, model):
         super().__init__()
         self.model = model
         self.view = view
-        self.model.questionChanged.connect(self.forward_question_changed)  # Connect to the Model signal
-        self.questionChanged.connect(self.view.update_question)
+        # Connect to the View signal
         self.view.shuffleQuestionSignal.connect(self.shuffle_question) 
         self.view.gameStartSignal.connect(self.game_start)
         self.view.getConfigSignal.connect(self.getConfig)
         self.view.keyPressEventSignal.connect(self.key_pressed)
+        # Connect to the Model signal
+        self.model.questionChanged.connect(self.forward_question_changed)
 
     def forward_question_changed(self, path):
-        self.questionChanged.emit(path)
+        self.view.update_question(path)
 
     def key_pressed(self, key):
         self.model.check_answer(key)
