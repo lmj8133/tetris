@@ -1,72 +1,102 @@
 import json
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QDialog, QLineEdit, QFormLayout, QMessageBox
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QDialog, QLineEdit, QFormLayout, QMessageBox, QTextEdit
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
-from threading import Timer
 
 class View(QWidget):
     keyPressEventSignal = pyqtSignal(str)
-    shuffleQuestionSignal = pyqtSignal()
-    gameStartSignal = pyqtSignal()
-    getConfigSignal = pyqtSignal()
+    startBtnSignal = pyqtSignal()
+    cfgBtnSignal = pyqtSignal()
 
     def __init__(self):
         super().__init__()
-        self.init_ui()
+        self.__init_ui()
 
-    def init_ui(self):
-        self.setWindowTitle("SRS Practice")
+    def __init_ui(self):
+        '''
+        define UI
+        '''
+        self.setWindowTitle("Tetris")
         self.setGeometry(100, 100, 300, 200)
 
         layout = QVBoxLayout()
 
-        self.label = QLabel()
+        self.label = QLabel('default')
         layout.addWidget(self.label)
 
-        self.start_button = QPushButton("Start")
-        self.start_button.clicked.connect(self.game_start)
+        self.label_img = QLabel('default')
+        layout.addWidget(self.label_img)
+
+        self.text_edit = QTextEdit('default')
+        layout.addWidget(self.text_edit)
+    
+        self.start_button = QPushButton('default')
+        self.start_button.clicked.connect(self.start_btn_click)
         layout.addWidget(self.start_button)
 
-        config_button = QPushButton("Configuration")
-        config_button.clicked.connect(self.show_configuration)
-        layout.addWidget(config_button)
+        self.config_button = QPushButton('Configuration')
+        self.config_button.clicked.connect(self.cfg_btn_click)
+        layout.addWidget(self.config_button)
 
         self.setLayout(layout)
 
         #set game screen at middle
         self.label.setAlignment(Qt.AlignCenter)
 
+        '''
+        define key of widget
+        '''
+        def mapTextEditorKey(val=None):
+            if val != None: self.text_edit.setPlainText(val)
+            else:           return self.text_edit.toPlainText()
+
+        def mapStartBtnTextKey(val=None):
+            if val != None: self.start_button.setText(val)
+            else:           return self.start_button.text()
+
+        def mapStartBtnEnableKey(val=None):
+            if val != None: self.start_button.setEnabled(val)
+            else:           return self.start_button.isEnabled()
+
+        def mapLabelTextKey(val=None):
+            if val != None: self.label.setText(val)
+            else:           return self.label.text()
+
+        def mapLabelImgKey(val=None):
+            if val != None: self.label_img.setPixmap(QPixmap(val))
+
+        self.data_key = {
+            'lebel_text': mapLabelTextKey,
+            'label_img': mapLabelImgKey,
+            'editor_text': mapTextEditorKey,
+            'start_btn_text': mapStartBtnTextKey,
+            'start_btn_enable': mapStartBtnEnableKey,
+        }
+        self.w2f_key = {
+            'start_btn_click': self.startBtnSignal,
+            'key_press': self.keyPressEventSignal,
+            'cfg_save_btn_click': self.cfgBtnSignal
+        }
+
+    def start_btn_click(self):
+        self.startBtnSignal.emit()
+
     def keyPressEvent(self, event):
         key = event.text()
         self.keyPressEventSignal.emit(key)
 
-    def game_start(self):
-        self.start_button.setEnabled(False)
-        self.gameStartSignal.emit()
-
-    def show_configuration(self):
-        config_dialog = ConfigurationDialog( self)
+    def cfg_btn_click(self):
+        config_dialog = ConfigurationDialog(self)
         config_dialog.exec_()
-
-    @pyqtSlot(str)
-    def update_question(self, path):
-        self.label.setText(f"Question {path}.")
-        self.label.setPixmap(QPixmap(path))
-
-    def show_result(self, result):
-        self.label.setText(f"{result}")
-
-        t = Timer(0.5, self.shuffleQuestionSignal.emit)
-        t.start()
 
 class ConfigurationDialog(QDialog):
     def __init__(self, view):
         super(ConfigurationDialog, self).__init__()
         self.view = view
-        self.init_ui()
+        self.__init_ui()
         self.loadDefaultConfig()
 
-    def init_ui(self):
+    def __init_ui(self):
         self.setWindowTitle("Configuration")
         self.setGeometry(100, 100, 300, 200)
 
@@ -90,12 +120,9 @@ class ConfigurationDialog(QDialog):
         self.setLayout(layout)
 
     def save_configuration(self):
-        # Save configuration logic here
         self.saveToJson()
         self.accept()
-        self.view.getConfigSignal.emit()
-        if not self.view.start_button.isEnabled():
-            self.view.shuffleQuestionSignal.emit()
+        self.view.cfgBtnSignal.emit()
 
     def saveToJson(self):
         if self.lineEdit_ccw.text() and self.lineEdit_cw.text():
