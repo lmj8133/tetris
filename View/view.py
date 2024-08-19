@@ -72,15 +72,18 @@ class ConfigurationDialog(QDialog):
 
         self.lineEdit_ccw = QLineEdit()
         self.lineEdit_cw = QLineEdit()
+        self.lineEdit_180 = QLineEdit()
 
         self.lineEdit_ccw.setMaxLength(1)
         self.lineEdit_cw.setMaxLength(1)
+        self.lineEdit_180.setMaxLength(1)
 
         layout = QVBoxLayout()
 
         formLayout = QFormLayout()
         formLayout.addRow("Counter Clockwise", self.lineEdit_ccw)
         formLayout.addRow("Clockwise", self.lineEdit_cw)
+        formLayout.addRow("180", self.lineEdit_180)
         layout.addLayout(formLayout)
 
         save_button = QPushButton("Save")
@@ -98,10 +101,10 @@ class ConfigurationDialog(QDialog):
             self.view.shuffleQuestionSignal.emit()
 
     def saveToJson(self):
-        if self.lineEdit_ccw.text() and self.lineEdit_cw.text():
+        if self.lineEdit_ccw.text() and self.lineEdit_cw.text() and self.lineEdit_180.text():
             try:
                 with open('Config/config.json', 'w') as json_file:
-                    json.dump({'ccw' : self.lineEdit_ccw.text(), 'cw' : self.lineEdit_cw.text()}, json_file)
+                    json.dump({'ccw' : self.lineEdit_ccw.text(), 'cw' : self.lineEdit_cw.text(), '180' : self.lineEdit_180.text()}, json_file)
                     QMessageBox.information(self, 'Saved', 'Data saved to ./Config/config.json')
             except Exception as e:
                 QMessageBox.critical(self, 'Error', f'Error saving configuration: {str(e)}')
@@ -113,3 +116,4 @@ class ConfigurationDialog(QDialog):
             config= json.load(json_file)
             self.lineEdit_ccw.setText(config.get('ccw', ''))
             self.lineEdit_cw.setText(config.get('cw', ''))
+            self.lineEdit_180.setText(config.get('180', ''))
